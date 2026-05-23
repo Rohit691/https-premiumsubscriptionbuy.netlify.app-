@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Online Subscription - Premium Plans at Lowest Prices</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0a0a0f;--bg2:#111118;--bg3:#18181f;--bg4:#1e1e28;
+  --accent:#f0c040;--text:#f0eee8;--muted:#888;
+  --border:#ffffff12;--card:#16161e;--card2:#1c1c26;
+  --red:#e84040;--green:#22c77a;--blue:#4a90e2;
+}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;overflow-x:hidden}
+
+/* NAV */
+nav{background:var(--bg2);border-bottom:1px solid var(--border);padding:0 24px;display:flex;align-items:center;gap:16px;height:62px;position:sticky;top:0;z-index:100}
+.logo{font-family:'Syne',sans-serif;font-weight:800;font-size:20px;color:var(--accent);white-space:nowrap}
+.logo span{color:var(--text)}
+.nav-links{display:flex;gap:4px;flex:1}
+.nav-link{padding:6px 12px;border-radius:8px;font-size:13px;color:var(--muted);cursor:pointer;transition:all .2s;white-space:nowrap}
+.nav-link:hover,.nav-link.active{background:var(--bg3);color:var(--text)}
+.nav-right{display:flex;align-items:center;gap:10px;margin-left:auto}
+.cart-btn{background:var(--accent);color:#000;border:none;padding:7px 16px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px;transition:all .2s}
+.cart-btn:hover{background:#ffd060}
+.cart-count{background:#000;color:var(--accent);border-radius:50%;width:20px;height:20px;font-size:11px;display:flex;align-items:center;justify-content:center;font-weight:700}
+.login-btn{background:transparent;border:1px solid var(--border);color:var(--muted);padding:7px 14px;border-radius:8px;font-size:13px;cursor:pointer;transition:all .2s}
+.login-btn:hover{border-color:var(--accent);color:var(--accent)}
+.user-btn{background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:7px 14px;border-radius:8px;font-size:13px;cursor:pointer;display:none;align-items:center;gap:6px}
+
+/* HERO */
+.hero{background:linear-gradient(135deg,#1a1205 0%,#0d0d18 60%,#0f1a0d 100%);padding:64px 24px;position:relative;overflow:hidden;border-bottom:1px solid var(--border)}
+.hero::before{content:'';position:absolute;top:-80px;right:-80px;width:500px;height:500px;background:radial-gradient(circle,#f0c04015 0%,transparent 70%);pointer-events:none}
+.hero-inner{max-width:1100px;margin:0 auto}
+.hero-badge{background:var(--bg3);border:1px solid var(--border);border-radius:40px;padding:6px 16px;font-size:12px;color:var(--accent);display:inline-flex;align-items:center;gap:8px;margin-bottom:20px}
+.pulse{width:7px;height:7px;background:var(--green);border-radius:50%;animation:pulse 1.5s infinite;display:inline-block}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.3)}}
+.hero h1{font-family:'Syne',sans-serif;font-size:52px;font-weight:800;line-height:1.1;letter-spacing:-2px;max-width:640px}
+.hero h1 .hi{color:var(--accent)}
+.hero p{color:var(--muted);margin-top:16px;font-size:16px;max-width:500px;line-height:1.7}
+.hero-cta{margin-top:28px;display:flex;gap:12px;flex-wrap:wrap}
+.btn-primary{background:var(--accent);color:#000;border:none;padding:13px 30px;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif}
+.btn-primary:hover{background:#ffd060;transform:translateY(-1px)}
+.btn-ghost{background:transparent;border:1px solid var(--border);color:var(--text);padding:13px 28px;border-radius:10px;font-size:15px;cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif}
+.btn-ghost:hover{border-color:var(--muted)}
+.hero-stats{display:flex;gap:36px;margin-top:44px;flex-wrap:wrap}
+.stat-num{font-family:'Syne',sans-serif;font-size:28px;font-weight:700;color:var(--accent)}
+.stat-label{font-size:12px;color:var(--muted);margin-top:2px}
+
+/* BANNER */
+.banner-strip{background:var(--accent);padding:10px 24px;display:flex;align-items:center;justify-content:center;gap:40px;flex-wrap:wrap}
+.banner-strip span{font-size:13px;font-weight:700;color:#000;display:flex;align-items:center;gap:6px}
+
+/* SECTIONS */
+.section{max-width:1100px;margin:0 auto;padding:36px 24px}
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px}
+.section-title{font-family:'Syne',sans-serif;font-size:22px;font-weight:700}
+.section-title span{color:var(--accent)}
+.see-all{font-size:12px;color:var(--muted);cursor:pointer;border:1px solid var(--border);padding:5px 14px;border-radius:20px;transition:all .2s}
+.see-all:hover{color:var(--accent);border-color:var(--accent)}
+
+/* CATEGORY CHIPS */
+.cat-grid{display:flex;gap:10px;flex-wrap:wrap}
+.cat-chip{background:var(--card);border:1px solid var(--border);padding:9px 18px;border-radius:24px;font-size:13px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:8px}
+.cat-chip:hover,.cat-chip.active{background:var(--accent);color:#000;border-color:var(--accent);font-weight:600}
+
+/* PRODUCT GRID */
+.products-wrap{background:var(--bg2);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.prod-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px}
+.prod-card{background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden;transition:all .25s;position:relative}
+.prod-card:hover{border-color:var(--accent);transform:translateY(-3px);background:var(--card2)}
+.prod-img{width:100%;height:110px;display:flex;align-items:center;justify-content:center;font-size:44px;position:relative}
+.prod-badge{position:absolute;top:8px;left:8px;background:var(--red);color:#fff;font-size:10px;font-weight:700;padding:3px 8px;border-radius:5px}
+.prod-body{padding:14px}
+.prod-name{font-weight:600;font-size:14px;margin-bottom:3px}
+.prod-sub{font-size:11px;color:var(--muted)}
+.prod-price{margin-top:10px;display:flex;align-items:baseline;gap:6px;flex-wrap:wrap}
+.price{font-family:'Syne',sans-serif;font-size:20px;font-weight:700;color:var(--accent)}
+.dur{font-size:11px;color:var(--muted)}
+.orig{font-size:12px;color:var(--muted);text-decoration:line-through}
+.add-btn{width:100%;margin-top:10px;background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:9px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif}
+.add-btn:hover{background:var(--accent);color:#000;border-color:var(--accent)}
+.added{background:var(--green)!important;color:#000!important;border-color:var(--green)!important}
+.loading-grid{text-align:center;padding:60px;color:var(--muted)}
+
+/* TRUST */
+.trust-section{background:var(--bg3);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.trust-grid{max-width:1100px;margin:0 auto;padding:28px 24px;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:24px}
+.trust-item{display:flex;align-items:center;gap:14px}
+.trust-icon{font-size:26px;width:48px;height:48px;background:var(--card);border-radius:12px;display:flex;align-items:center;justify-content:center;border:1px solid var(--border);flex-shrink:0}
+.trust-title{font-size:14px;font-weight:600;margin-bottom:2px}
+.trust-desc{font-size:12px;color:var(--muted)}
+
+/* TRENDING */
+.trend-grid{display:flex;gap:10px;flex-wrap:wrap}
+.trend-pill{background:var(--card);border:1px solid var(--border);border-radius:30px;padding:9px 18px;font-size:13px;display:flex;align-items:center;gap:8px;cursor:pointer;transition:all .2s}
+.trend-pill:hover{border-color:var(--accent);background:var(--card2)}
+.trend-price{color:var(--accent);font-weight:600}
+
+/* CART PANEL */
+.cart-overlay{position:fixed;inset:0;background:#00000080;z-index:200;opacity:0;pointer-events:none;transition:opacity .3s}
+.cart-overlay.open{opacity:1;pointer-events:all}
+.cart-panel{position:fixed;right:-440px;top:0;bottom:0;width:400px;background:var(--bg2);border-left:1px solid var(--border);z-index:201;transition:right .3s;display:flex;flex-direction:column}
+.cart-panel.open{right:0}
+.cart-header{padding:20px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.cart-header h3{font-family:'Syne',sans-serif;font-size:18px;font-weight:700}
+.close-btn{background:var(--bg3);border:1px solid var(--border);color:var(--muted);width:34px;height:34px;border-radius:8px;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center}
+.close-btn:hover{color:var(--text)}
+.cart-items{flex:1;overflow-y:auto;padding:16px 24px}
+.cart-item{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px;margin-bottom:10px;display:flex;align-items:center;gap:12px}
+.cart-item-icon{font-size:24px;width:44px;height:44px;background:var(--bg3);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.cart-item-info{flex:1}
+.cart-item-name{font-size:13px;font-weight:600}
+.cart-item-dur{font-size:11px;color:var(--muted);margin-top:2px}
+.cart-item-price{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:var(--accent);white-space:nowrap}
+.remove-item{background:none;border:none;color:var(--muted);cursor:pointer;font-size:16px;padding:4px}
+.remove-item:hover{color:var(--red)}
+.cart-footer{padding:20px 24px;border-top:1px solid var(--border)}
+.cart-total{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:16px}
+.cart-total-num{font-family:'Syne',sans-serif;font-size:22px;font-weight:700;color:var(--accent)}
+.checkout-btn{width:100%;background:var(--accent);color:#000;border:none;padding:14px;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif}
+.checkout-btn:hover{background:#ffd060}
+.empty-cart{text-align:center;padding:60px 20px;color:var(--muted)}
+.empty-cart .ec-icon{font-size:52px;margin-bottom:14px}
+
+/* MODALS */
+.modal-overlay{position:fixed;inset:0;background:#00000090;z-index:300;opacity:0;pointer-events:none;transition:opacity .3s;display:flex;align-items:center;justify-content:center}
+.modal-overlay.open{opacity:1;pointer-events:all}
+.modal{background:var(--bg2);border:1px solid var(--border);border-radius:20px;padding:36px;width:380px;max-width:92vw;position:relative}
+.modal h2{font-family:'Syne',sans-serif;font-size:22px;font-weight:700;margin-bottom:6px}
+.modal p{color:var(--muted);font-size:14px;margin-bottom:24px}
+.modal-close{position:absolute;top:16px;right:16px;background:var(--bg3);border:1px solid var(--border);color:var(--muted);width:32px;height:32px;border-radius:8px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center}
+.input-group{margin-bottom:14px}
+.input-group label{font-size:12px;color:var(--muted);display:block;margin-bottom:6px;font-weight:500}
+.input-group input{width:100%;background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:11px 14px;border-radius:8px;font-size:14px;font-family:'DM Sans',sans-serif;outline:none;transition:border .2s}
+.input-group input:focus{border-color:var(--accent)}
+.modal-btn{width:100%;background:var(--accent);color:#000;border:none;padding:13px;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;margin-top:8px;font-family:'DM Sans',sans-serif;transition:all .2s}
+.modal-btn:hover{background:#ffd060}
+.modal-btn:disabled{opacity:.5;cursor:not-allowed}
+.divider-or{text-align:center;color:var(--muted);font-size:12px;margin:16px 0;position:relative}
+.divider-or::before,.divider-or::after{content:'';position:absolute;top:50%;width:42%;height:1px;background:var(--border)}
+.divider-or::before{left:0}.divider-or::after{right:0}
+.switch-link{color:var(--accent);cursor:pointer;font-weight:600}
+.error-msg{background:#e8404018;border:1px solid #e8404040;color:#ff6b6b;padding:10px 14px;border-radius:8px;font-size:13px;margin-bottom:14px;display:none}
+.success-msg{background:#22c77a18;border:1px solid #22c77a40;color:var(--green);padding:10px 14px;border-radius:8px;font-size:13px;margin-bottom:14px;display:none}
+
+/* ORDER SUCCESS */
+.order-success{text-align:center;padding:20px 0}
+.order-success .icon{font-size:60px;margin-bottom:16px}
+.order-success h3{font-family:'Syne',sans-serif;font-size:20px;font-weight:700;margin-bottom:8px}
+.order-success p{color:var(--muted);font-size:14px;line-height:1.6}
+
+/* FOOTER */
+footer{background:var(--bg2);border-top:1px solid var(--border);padding:44px 24px 24px}
+.footer-inner{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px}
+.footer-col h4{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;margin-bottom:16px;color:var(--accent)}
+.footer-col p{font-size:13px;color:var(--muted);line-height:1.7}
+.footer-link{font-size:13px;color:var(--muted);display:block;margin-bottom:10px;cursor:pointer;transition:color .2s}
+.footer-link:hover{color:var(--text)}
+.footer-bottom{max-width:1100px;margin:28px auto 0;padding-top:20px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--muted);flex-wrap:wrap;gap:10px}
+.wa-btn{position:fixed;bottom:24px;right:24px;background:#25d366;color:#fff;border:none;border-radius:50%;width:56px;height:56px;font-size:26px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 24px #25d36650;transition:all .2s;z-index:50;text-decoration:none}
+.wa-btn:hover{transform:scale(1.1)}
+.notify{position:fixed;bottom:100px;right:24px;background:var(--green);color:#000;padding:10px 18px;border-radius:10px;font-size:13px;font-weight:700;transform:translateX(200px);transition:transform .3s;z-index:400}
+.notify.show{transform:translateX(0)}
+.divider{height:1px;background:var(--border)}
+
+@media(max-width:768px){
+  .hero h1{font-size:34px}
+  .footer-inner{grid-template-columns:1fr 1fr}
+  .nav-links{display:none}
+}
+@media(max-width:480px){
+  .footer-inner{grid-template-columns:1fr}
+  .prod-grid{grid-template-columns:repeat(auto-fill,minmax(160px,1fr))}
+  .hero h1{font-size:28px}
+}
+</style>
+</head>
+<body>
+
+<div id="notify" class="notify">✓ Added to cart!</div>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">Online<span>Subscription</span></div>
+  <div class="nav-links">
+    <div class="nav-link active" onclick="filterCat('all',null,this)">All</div>
+    <div class="nav-link" onclick="filterCat('ott',null,this)">OTT</div>
+    <div class="nav-link" onclick="filterCat('ai',null,this)">AI Tools</div>
+    <div class="nav-link" onclick="filterCat('edu',null,this)">Education</div>
+    <div class="nav-link" onclick="filterCat('edit',null,this)">Editing</div>
+    <div class="nav-link" onclick="filterCat('other',null,this)">Other</div>
+  </div>
+  <div class="nav-right">
+    <button class="login-btn" id="login-btn" onclick="openModal('login')">Login / Register</button>
+    <div class="user-btn" id="user-btn">
+      <span id="user-name-nav">👤 Account</span>
+      <span onclick="logout()" style="color:var(--muted);font-size:12px;cursor:pointer;margin-left:4px">· Logout</span>
+    </div>
+    <button class="cart-btn" onclick="toggleCart()">
+      🛒 Cart <span class="cart-count" id="cart-count">0</span>
+    </button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-badge"><span class="pulse"></span> Live deals updated daily</div>
+    <h1>Premium Subs at<br><span class="hi">Crazy Low</span> Prices 🔥</h1>
+    <p>Get Netflix, Canva, ChatGPT, LinkedIn & 50+ premium subscriptions at up to 96% off market price. Instant delivery guaranteed.</p>
+    <div class="hero-cta">
+      <button class="btn-primary" onclick="document.querySelector('.products-wrap').scrollIntoView({behavior:'smooth'})">Browse All Deals</button>
+      <button class="btn-ghost" onclick="openModal('register')">Create Account →</button>
+    </div>
+    <div class="hero-stats">
+      <div class="stat"><div class="stat-num">50+</div><div class="stat-label">Products</div></div>
+      <div class="stat"><div class="stat-num">10K+</div><div class="stat-label">Happy Customers</div></div>
+      <div class="stat"><div class="stat-num">96%</div><div class="stat-label">Max Savings</div></div>
+      <div class="stat"><div class="stat-num">4.9★</div><div class="stat-label">Rating</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- BANNER -->
+<div class="banner-strip">
+  <span>⚡ Instant Delivery</span>
+  <span>🔒 Secure Payments via Razorpay</span>
+  <span>💬 24/7 WhatsApp Support</span>
+  <span>✅ Verified Accounts</span>
+</div>
+
+<!-- CATEGORIES -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-title">Browse by <span>Category</span></div>
+  </div>
+  <div class="cat-grid">
+    <div class="cat-chip active" onclick="filterCat('all',this)">⚡ All Products</div>
+    <div class="cat-chip" onclick="filterCat('ott',this)">📺 OTT Streaming</div>
+    <div class="cat-chip" onclick="filterCat('ai',this)">🤖 AI Tools</div>
+    <div class="cat-chip" onclick="filterCat('edu',this)">🎓 Education</div>
+    <div class="cat-chip" onclick="filterCat('edit',this)">✏️ Editing Tools</div>
+    <div class="cat-chip" onclick="filterCat('other',this)">🎯 Other</div>
+  </div>
+</div>
+
+<!-- PRODUCTS -->
+<div class="products-wrap">
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title" id="section-label">Top Selling <span>Products 💪</span></div>
+      <div class="see-all">View All</div>
+    </div>
+    <div class="prod-grid" id="prod-grid">
+      <div class="loading-grid" style="grid-column:1/-1">Loading products... ⏳</div>
+    </div>
+  </div>
+</div>
+
+<!-- TRUST -->
+<div class="trust-section">
+  <div class="trust-grid">
+    <div class="trust-item"><div class="trust-icon">⚡</div><div><div class="trust-title">Instant Delivery</div><div class="trust-desc">Credentials sent within minutes</div></div></div>
+    <div class="trust-item"><div class="trust-icon">🔒</div><div><div class="trust-title">Secure & Safe</div><div class="trust-desc">100% safe via Razorpay</div></div></div>
+    <div class="trust-item"><div class="trust-icon">🔄</div><div><div class="trust-title">Replacement Guarantee</div><div class="trust-desc">Free replacement if account fails</div></div></div>
+    <div class="trust-item"><div class="trust-icon">💬</div><div><div class="trust-title">24/7 Support</div><div class="trust-desc">WhatsApp anytime</div></div></div>
+  </div>
+</div>
+
+<!-- TRENDING -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-title">Trending <span>🔥</span></div>
+  </div>
+  <div class="trend-grid" id="trend-grid"></div>
+</div>
+
+<div class="divider"></div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-col">
+      <h4>Online Subscription</h4>
+      <p>India's #1 premium subscription marketplace. Get top platforms at unbeatable prices with instant delivery and 24/7 support.</p>
+      <p style="margin-top:14px;color:#555">📍 Gurugram, Haryana, India</p>
+    </div>
+    <div class="footer-col">
+      <h4>Company</h4>
+      <span class="footer-link" onclick="openPage('about')">About Us</span>
+      <span class="footer-link" onclick="openPage('blog')">Blog</span>
+      <span class="footer-link" onclick="openPage('faq')">FAQ</span>
+    </div>
+    <div class="footer-col">
+      <h4>Support</h4>
+      <span class="footer-link" onclick="window.open('https://wa.me/918409081014')">WhatsApp Support</span>
+      <span class="footer-link" onclick="openPage('trackOrder')">Track Order</span>
+      <span class="footer-link" onclick="openPage('howItWorks')">How it Works</span>
+    </div>
+    <div class="footer-col">
+      <h4>Legal</h4>
+      <span class="footer-link" onclick="openPage('terms')">Terms of Service</span>
+      <span class="footer-link" onclick="openPage('privacy')">Privacy Policy</span>
+      <span class="footer-link" onclick="openPage('refund')">Refund Policy</span>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 Online Subscription. All rights reserved.</span>
+    <span>Made with ❤️ in India 🇮🇳</span>
+  </div>
+</footer>
+
+<!-- CART PANEL -->
+<div class="cart-overlay" id="cart-overlay" onclick="toggleCart()"></div>
+<div class="cart-panel" id="cart-panel">
+  <div class="cart-header">
+    <h3>🛒 Your Cart</h3>
+    <button class="close-btn" onclick="toggleCart()">✕</button>
+  </div>
+  <div class="cart-items" id="cart-items"></div>
+  <div class="cart-footer" id="cart-footer" style="display:none">
+    <div class="cart-total">
+      <span style="font-size:15px">Total Amount</span>
+      <span class="cart-total-num" id="cart-total">₹0</span>
+    </div>
+    <button class="checkout-btn" onclick="startCheckout()">Pay with Razorpay →</button>
+  </div>
+</div>
+
+<!-- LOGIN MODAL -->
+<div class="modal-overlay" id="login-modal" onclick="closeModalOutside(event,'login-modal')">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('login-modal')">✕</button>
+    <h2>Welcome Back 👋</h2>
+    <p>Login to your account to track orders</p>
+    <div class="error-msg" id="login-error"></div>
+    <div class="input-group"><label>Email Address</label><input type="email" id="login-email" placeholder="you@example.com"></div>
+    <div class="input-group"><label>Password</label><input type="password" id="login-pass" placeholder="••••••••"></div>
+    <button class="modal-btn" onclick="doLogin()" id="login-submit-btn">Login to Account</button>
+    <p style="text-align:center;margin-top:16px;font-size:13px;color:var(--muted)">
+      Don't have an account? <span class="switch-link" onclick="switchModal('login-modal','register-modal')">Sign up free</span>
+    </p>
+  </div>
+</div>
+
+<!-- REGISTER MODAL -->
+<div class="modal-overlay" id="register-modal" onclick="closeModalOutside(event,'register-modal')">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('register-modal')">✕</button>
+    <h2>Create Account 🚀</h2>
+    <p>Join thousands of happy subscribers</p>
+    <div class="error-msg" id="register-error"></div>
+    <div class="input-group"><label>Full Name</label><input type="text" id="reg-name" placeholder="Your Name"></div>
+    <div class="input-group"><label>Email Address</label><input type="email" id="reg-email" placeholder="you@example.com"></div>
+    <div class="input-group"><label>Phone Number</label><input type="tel" id="reg-phone" placeholder="9XXXXXXXXX"></div>
+    <div class="input-group"><label>Password</label><input type="password" id="reg-pass" placeholder="Min 6 characters"></div>
+    <button class="modal-btn" onclick="doRegister()" id="register-submit-btn">Create Account</button>
+    <p style="text-align:center;margin-top:16px;font-size:13px;color:var(--muted)">
+      Already have an account? <span class="switch-link" onclick="switchModal('register-modal','login-modal')">Login</span>
+    </p>
+  </div>
+</div>
+
+<!-- ORDER SUCCESS MODAL -->
+<div class="modal-overlay" id="success-modal">
+  <div class="modal">
+    <div class="order-success">
+      <div class="icon">🎉</div>
+      <h3>Payment Successful!</h3>
+      <p>Your order has been placed. You will receive your subscription credentials on your email within a few minutes.</p>
+      <p style="margin-top:12px;font-size:12px;color:#555">Check your spam folder if you don't see it. For support, WhatsApp us.</p>
+      <button class="modal-btn" style="margin-top:20px" onclick="closeModal('success-modal');cart=[];updateCartUI()">Continue Shopping</button>
+    </div>
+  </div>
+</div>
+
+<!-- WHATSAPP -->
+<a class="wa-btn" href="https://wa.me/918409081014" target="_blank" title="WhatsApp Support">💬</a>
+
+<script>
+// =============================================
+// CONFIG — Change these values
+// =============================================
+const API_BASE = 'https://https-premiumsubscriptionbuy-netlify-app.onrender.com/api'; // Change to your deployed backend URL
+const RAZORPAY_KEY = 'rzp_test_XXXXXXXXXX';   // Your Razorpay Key ID
+
+// =============================================
+// STATIC PRODUCTS (replace with API when backend is live)
+// =============================================
+const staticProducts = [
+  {_id:'1',name:'Canva Pro (Edu)',icon:'🎨',price:352,originalPrice:5900,duration:'12 Months',discount:94,category:'edit',bg:'#1a0e22'},
+  {_id:'2',name:'Netflix Premium',icon:'🎬',price:480,originalPrice:6600,duration:'06 Months',discount:93,category:'ott',bg:'#1a0808'},
+  {_id:'3',name:'ChatGPT Plus',icon:'🤖',price:999,originalPrice:12000,duration:'12 Months',discount:92,category:'ai',bg:'#081a14'},
+  {_id:'4',name:'LinkedIn Premium',icon:'💼',price:587,originalPrice:3500,duration:'03 Months',discount:83,category:'edu',bg:'#060e1a'},
+  {_id:'5',name:'Amazon Prime',icon:'📦',price:352,originalPrice:950,duration:'06 Months',discount:63,category:'ott',bg:'#1a1008'},
+  {_id:'6',name:'Coursera Plus',icon:'📚',price:1764,originalPrice:9900,duration:'12 Months',discount:82,category:'edu',bg:'#081020'},
+  {_id:'7',name:'Nord VPN',icon:'🔒',price:587,originalPrice:2100,duration:'03 Months',discount:72,category:'other',bg:'#0d081a'},
+  {_id:'8',name:'Spotify Premium',icon:'🎵',price:250,originalPrice:1800,duration:'06 Months',discount:86,category:'ott',bg:'#061a0a'},
+  {_id:'9',name:'Adobe Creative',icon:'🖼️',price:1499,originalPrice:18000,duration:'12 Months',discount:92,category:'edit',bg:'#1a0808'},
+  {_id:'10',name:'YouTube Premium',icon:'▶️',price:320,originalPrice:3600,duration:'06 Months',discount:91,category:'ott',bg:'#1a0808'},
+  {_id:'11',name:'Midjourney Pro',icon:'🎭',price:999,originalPrice:9600,duration:'12 Months',discount:90,category:'ai',bg:'#0f081a'},
+  {_id:'12',name:'Duolingo Super',icon:'🦜',price:299,originalPrice:8400,duration:'12 Months',discount:96,category:'edu',bg:'#0b1a08'},
+  {_id:'13',name:'Grammarly Pro',icon:'✍️',price:499,originalPrice:14400,duration:'12 Months',discount:97,category:'ai',bg:'#081a15'},
+  {_id:'14',name:'DataCamp Pro',icon:'📊',price:2352,originalPrice:30000,duration:'12 Months',discount:92,category:'edu',bg:'#081220'},
+  {_id:'15',name:'Zee5 Premium',icon:'🎞️',price:528,originalPrice:1000,duration:'12 Months',discount:47,category:'ott',bg:'#1a0a08'},
+  {_id:'16',name:'Capcut Pro',icon:'🎥',price:940,originalPrice:8000,duration:'06 Months',discount:63,category:'edit',bg:'#08101a'},
+  {_id:'17',name:'Quillbot Pro',icon:'✏️',price:234,originalPrice:2000,duration:'01 Month',discount:88,category:'ai',bg:'#0a1a0a'},
+  {_id:'18',name:'Sony LIV',icon:'📡',price:293,originalPrice:900,duration:'06 Months',discount:67,category:'ott',bg:'#1a0808'},
+  {_id:'19',name:'Gemini AI Pro',icon:'💎',price:1764,originalPrice:24000,duration:'12 Months',discount:93,category:'ai',bg:'#0a081a'},
+  {_id:'20',name:'Swiggy One',icon:'🍔',price:58,originalPrice:1200,duration:'06 Months',discount:95,category:'other',bg:'#1a0e08'},
+];
+
+// =============================================
+// STATE
+// =============================================
+let cart = [];
+let allProducts = [];
+let currentUser = null;
+window.currentUser = null;
+let currentCat = 'all';
+
+// =============================================
+// INIT
+// =============================================
+window.addEventListener('DOMContentLoaded', () => {
+  loadProducts();
+  loadUser();
+  updateCartUI();
+});
+
+// =============================================
+// PRODUCTS
+// =============================================
+async function loadProducts() {
+  try {
+    const res = await fetch(`${API_BASE}/products`);
+    if (res.ok) {
+      allProducts = await res.json();
+    } else {
+      throw new Error('API not available');
+    }
+  } catch (e) {
+    // Use static products if backend not connected yet
+    allProducts = staticProducts;
+  }
+  renderProducts(currentCat);
+  renderTrending();
+}
+
+function renderProducts(cat = 'all') {
+  currentCat = cat;
+  const grid = document.getElementById('prod-grid');
+  const filtered = cat === 'all' ? allProducts : allProducts.filter(p => p.category === cat);
+  const titles = {
+    all:'Top Selling <span>Products 💪</span>',
+    ott:'OTT <span>Streaming Plans</span>',
+    ai:'AI <span>Tools & Software</span>',
+    edu:'Education <span>& Career</span>',
+    edit:'Editing <span>Tools</span>',
+    other:'Other <span>Plans</span>'
+  };
+  document.getElementById('section-label').innerHTML = titles[cat] || titles.all;
+  if (filtered.length === 0) {
+    grid.innerHTML = '<div class="loading-grid" style="grid-column:1/-1">No products found in this category.</div>';
+    return;
+  }
+  grid.innerHTML = filtered.map(p => `
+    <div class="prod-card" onclick="openProductPage('${p._id}')" style="cursor:pointer">
+      <div class="prod-img" style="background:${p.bg||'#111'}">
+        <span>${p.icon}</span>
+        <div class="prod-badge">UPTO ${p.discount}% OFF</div>
+      </div>
+      <div class="prod-body">
+        <div class="prod-name">${p.name}</div>
+        <div class="prod-sub">Click to see all plans</div>
+        <div class="prod-price">
+          <span class="price">₹${p.price}</span>
+          <span class="dur">/ ${p.duration}</span>
+          <span class="orig">₹${p.originalPrice}</span>
+        </div>
+        <button class="add-btn" id="btn-${p._id}" onclick="event.stopPropagation();addToCart('${p._id}')">+ Add to Cart</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderTrending() {
+  const top = allProducts.slice(0, 8);
+  document.getElementById('trend-grid').innerHTML = top.map(p => `
+    <div class="trend-pill" onclick="addToCart('${p._id}')">
+      ${p.icon} ${p.name} <span class="trend-price">₹${p.price}</span>
+    </div>
+  `).join('');
+}
+
+function filterCat(cat, chipEl, navEl) {
+  document.querySelectorAll('.cat-chip').forEach(c => c.classList.remove('active'));
+  document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+  if (chipEl) chipEl.classList.add('active');
+  if (navEl) navEl.classList.add('active');
+  renderProducts(cat);
+}
+
+// =============================================
+// CART
+// =============================================
+function addToCart(id) {
+  const p = allProducts.find(x => x._id === id);
+  if (!p) return;
+  const existing = cart.find(c => c._id === id);
+  if (existing) { existing.qty++; } else { cart.push({ ...p, qty: 1 }); }
+  updateCartUI();
+  const btn = document.getElementById('btn-' + id);
+  if (btn) {
+    btn.textContent = '✓ Added!';
+    btn.classList.add('added');
+    setTimeout(() => { btn.textContent = '+ Add to Cart'; btn.classList.remove('added'); }, 1500);
+  }
+  showNotify();
+}
+
+function removeFromCart(id) {
+  cart = cart.filter(c => c._id !== id);
+  updateCartUI();
+}
+
+function updateCartUI() {
+  const count = cart.reduce((s, c) => s + c.qty, 0);
+  document.getElementById('cart-count').textContent = count;
+  const items = document.getElementById('cart-items');
+  const footer = document.getElementById('cart-footer');
+  if (cart.length === 0) {
+    items.innerHTML = '<div class="empty-cart"><div class="ec-icon">🛒</div><div style="font-weight:600;font-size:15px">Your cart is empty</div><div style="font-size:13px;margin-top:8px">Browse deals and add products!</div></div>';
+    footer.style.display = 'none';
+  } else {
+    items.innerHTML = cart.map(c => `
+      <div class="cart-item">
+        <div class="cart-item-icon">${c.icon}</div>
+        <div class="cart-item-info">
+          <div class="cart-item-name">${c.name}</div>
+          <div class="cart-item-dur">${c.duration}${c.qty > 1 ? ' × ' + c.qty : ''}</div>
+        </div>
+        <div class="cart-item-price">₹${c.price * c.qty}</div>
+        <button class="remove-item" onclick="removeFromCart('${c._id}')">✕</button>
+      </div>
+    `).join('');
+    const total = cart.reduce((s, c) => s + c.price * c.qty, 0);
+    document.getElementById('cart-total').textContent = '₹' + total;
+    footer.style.display = 'block';
+  }
+}
+
+function toggleCart() {
+  document.getElementById('cart-panel').classList.toggle('open');
+  document.getElementById('cart-overlay').classList.toggle('open');
+}
+
+// =============================================
+// RAZORPAY CHECKOUT
+// =============================================
+async function startCheckout() {
+  if (!currentUser) {
+    toggleCart();
+    openModal('login');
+    return;
+  }
+  const total = cart.reduce((s, c) => s + c.price * c.qty, 0);
+  try {
+    // Create order on backend
+    const res = await fetch(`${API_BASE}/orders/create`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('token')}` },
+      body: JSON.stringify({ items: cart, amount: total })
+    });
+    const order = await res.json();
+    openRazorpay(order.razorpayOrderId, total);
+  } catch (e) {
+    // Demo mode: open Razorpay without backend
+    openRazorpay(null, total);
+  }
+}
+
+function openRazorpay(orderId, amount) {
+  const options = {
+    key: RAZORPAY_KEY,
+    amount: amount * 100,
+    currency: 'INR',
+    name: 'Online Subscription',
+    description: 'Premium Subscription Purchase',
+    order_id: orderId,
+    prefill: {
+      name: currentUser?.name || '',
+      email: currentUser?.email || '',
+      contact: currentUser?.phone || ''
+    },
+    theme: { color: '#f0c040' },
+    handler: async function(response) {
+      // Payment success - verify on backend
+      try {
+        await fetch(`${API_BASE}/orders/verify`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('token')}` },
+          body: JSON.stringify({
+            razorpay_payment_id: response.razorpay_payment_id,
+            razorpay_order_id: response.razorpay_order_id,
+            razorpay_signature: response.razorpay_signature,
+            items: cart
+          })
+        });
+      } catch (e) { /* show success anyway in demo */ }
+      toggleCart();
+      openModal('success-modal-direct');
+    }
+  };
+  const rzp = new Razorpay(options);
+  rzp.open();
+}
+
+function openModal(name) {
+  if (name === 'login') document.getElementById('login-modal').classList.add('open');
+  else if (name === 'register') document.getElementById('register-modal').classList.add('open');
+  else if (name === 'success-modal-direct') document.getElementById('success-modal').classList.add('open');
+}
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+function closeModalOutside(e, id) { if (e.target === document.getElementById(id)) closeModal(id); }
+function switchModal(closeId, openId) { closeModal(closeId); document.getElementById(openId).classList.add('open'); }
+
+// =============================================
+// AUTH
+// =============================================
+async function doLogin() {
+  const email = document.getElementById('login-email').value.trim();
+  const pass = document.getElementById('login-pass').value;
+  const errEl = document.getElementById('login-error');
+  const btn = document.getElementById('login-submit-btn');
+  if (!email || !pass) { showError(errEl, 'Please fill all fields'); return; }
+  btn.disabled = true; btn.textContent = 'Logging in...';
+  try {
+    const res = await fetch(`${API_BASE}/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password: pass })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message || 'Login failed');
+    localStorage.setItem('token', data.token);
+    currentUser = data.user;
+    updateAuthUI();
+    closeModal('login-modal');
+  } catch (e) {
+    showError(errEl, e.message);
+  } finally { btn.disabled = false; btn.textContent = 'Login to Account'; }
+}
+
+async function doRegister() {
+  const name = document.getElementById('reg-name').value.trim();
+  const email = document.getElementById('reg-email').value.trim();
+  const phone = document.getElementById('reg-phone').value.trim();
+  const pass = document.getElementById('reg-pass').value;
+  const errEl = document.getElementById('register-error');
+  const btn = document.getElementById('register-submit-btn');
+  if (!name || !email || !phone || !pass) { showError(errEl, 'Please fill all fields'); return; }
+  if (pass.length < 6) { showError(errEl, 'Password must be at least 6 characters'); return; }
+  btn.disabled = true; btn.textContent = 'Creating account...';
+  try {
+    const res = await fetch(`${API_BASE}/auth/register`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, email, phone, password: pass })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message || 'Registration failed');
+    localStorage.setItem('token', data.token);
+    currentUser = data.user;
+    updateAuthUI();
+    closeModal('register-modal');
+  } catch (e) {
+    showError(errEl, e.message);
+  } finally { btn.disabled = false; btn.textContent = 'Create Account'; }
+}
+
+function loadUser() {
+  const token = localStorage.getItem('token');
+  if (!token) return;
+  fetch(`${API_BASE}/auth/me`, { headers: { 'Authorization': `Bearer ${token}` } })
+    .then(r => r.json())
+    .then(data => { if (data._id) { currentUser = data; updateAuthUI(); } })
+    .catch(() => {});
+}
+
+function updateAuthUI() {
+  if (currentUser) {
+    window.currentUser = currentUser;
+    document.getElementById('login-btn').style.display = 'none';
+    const userBtn = document.getElementById('user-btn');
+    userBtn.style.display = 'flex';
+    document.getElementById('user-name-nav').textContent = '👤 ' + currentUser.name.split(' ')[0];
+    // Check if there was a pending buy before login
+    const pending = sessionStorage.getItem('pendingBuy');
+    if (pending) {
+      sessionStorage.removeItem('pendingBuy');
+      const b = JSON.parse(pending);
+      // Close login modal and show WhatsApp order
+      document.getElementById('login-modal').classList.remove('open');
+      document.getElementById('register-modal').classList.remove('open');
+      setTimeout(() => showWhatsAppOrder(b.productId, b.planId, b.price, b.planName, b.duration), 400);
+    }
+  }
+}
+
+function logout() {
+  localStorage.removeItem('token');
+  currentUser = null;
+  window.currentUser = null;
+  document.getElementById('login-btn').style.display = 'flex';
+  document.getElementById('user-btn').style.display = 'none';
+}
+
+function showError(el, msg) { el.textContent = msg; el.style.display = 'block'; }
+function showNotify() {
+  const n = document.getElementById('notify');
+  n.classList.add('show');
+  setTimeout(() => n.classList.remove('show'), 2000);
+}
+</script>
+<script src="product-page.js"></script>
+<script src="pages.js"></script>
+</body>
+</html>
