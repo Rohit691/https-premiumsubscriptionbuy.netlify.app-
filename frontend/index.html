@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Online Subscription - Premium Plans at Lowest Prices</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
-<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 :root{
@@ -228,7 +228,7 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:44px 24p
 <!-- BANNER -->
 <div class="banner-strip">
   <span>⚡ Instant Delivery</span>
-  <span>🔒 Secure Payments via WhatsApp</span>
+  <span>🔒 Secure WhatsApp Orders</span>
   <span>💬 24/7 WhatsApp Support</span>
   <span>✅ Verified Accounts</span>
 </div>
@@ -327,7 +327,7 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:44px 24p
       <span style="font-size:15px">Total Amount</span>
       <span class="cart-total-num" id="cart-total">₹0</span>
     </div>
-    <button class="checkout-btn" onclick="startCheckout()">Confirm via WhatsApp →</button>
+    <button class="checkout-btn" onclick="startCheckout()">Order via WhatsApp 💬</button>
   </div>
 </div>
 
@@ -385,8 +385,8 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:44px 24p
 // =============================================
 // CONFIG — Change these values
 // =============================================
-const API_BASE = 'https://https-premiumsubscriptionbuy-netlify-app-npgs.onrender.com/api'; // Change to your deployed backend URL
-const RAZORPAY_KEY = 'rzp_test_XXXXXXXXXX';   // Your Razorpay Key ID
+const API_BASE = 'http://localhost:5000/api'; // Change to your deployed backend URL
+
 
 // =============================================
 // STATIC PRODUCTS (replace with API when backend is live)
@@ -560,64 +560,28 @@ function toggleCart() {
 }
 
 // =============================================
-// RAZORPAY CHECKOUT
+// WHATSAPP CHECKOUT
 // =============================================
-async function startCheckout() {
+function startCheckout() {
   if (!currentUser) {
     toggleCart();
     openModal('login');
     return;
   }
   const total = cart.reduce((s, c) => s + c.price * c.qty, 0);
-  try {
-    // Create order on backend
-    const res = await fetch(`${API_BASE}/orders/create`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('token')}` },
-      body: JSON.stringify({ items: cart, amount: total })
-    });
-    const order = await res.json();
-    openRazorpay(order.razorpayOrderId, total);
-  } catch (e) {
-    // Demo mode: open Razorpay without backend
-    openRazorpay(null, total);
-  }
-}
-
-function openRazorpay(orderId, amount) {
-  const options = {
-    key: RAZORPAY_KEY,
-    amount: amount * 100,
-    currency: 'INR',
-    name: 'Online Subscription',
-    description: 'Premium Subscription Purchase',
-    order_id: orderId,
-    prefill: {
-      name: currentUser?.name || '',
-      email: currentUser?.email || '',
-      contact: currentUser?.phone || ''
-    },
-    theme: { color: '#f0c040' },
-    handler: async function(response) {
-      // Payment success - verify on backend
-      try {
-        await fetch(`${API_BASE}/orders/verify`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('token')}` },
-          body: JSON.stringify({
-            razorpay_payment_id: response.razorpay_payment_id,
-            razorpay_order_id: response.razorpay_order_id,
-            razorpay_signature: response.razorpay_signature,
-            items: cart
-          })
-        });
-      } catch (e) { /* show success anyway in demo */ }
-      toggleCart();
-      openModal('success-modal-direct');
-    }
-  };
-  const rzp = new Razorpay(options);
-  rzp.open();
+  const orderId = 'ORD' + Date.now().toString().slice(-6);
+  const itemsList = cart.map(c => `• ${c.icon} ${c.name} (${c.duration}) x${c.qty} = ₹${c.price * c.qty}`).join('\n');
+  const msg = encodeURIComponent(
+    `Hello! I want to place an order 🛒\n\n` +
+    `${itemsList}\n\n` +
+    `*Total: ₹${total}*\n` +
+    `*Order ID: #${orderId}*\n\n` +
+    `*Name:* ${currentUser.name}\n` +
+    `*Email:* ${currentUser.email}\n\n` +
+    `Please confirm my order and share payment details. Thank you!`
+  );
+  toggleCart();
+  window.open(`https://wa.me/918409081014?text=${msg}`, '_blank');
 }
 
 function openModal(name) {
